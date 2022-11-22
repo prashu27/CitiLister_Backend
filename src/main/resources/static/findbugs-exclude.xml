@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Package name="~.*\.model"/>
+    </Match>
+    <Match>
+        <Package name="~.*\.event"/>
+    </Match>
+    <Match>
+        <Package name="~.*\.authenticators"/>
+    </Match>
+    <Match>
+        <Package name="com.ybl.genie.mock.generated.crmrequesthandler"/>
+    </Match>
+    <Match>
+        <Package name="~.*\.generated"/>
+    </Match>
+    <Match>
+        <Class name="com.ybl.genie.platform.AuthServiceApplication"/>
+        <Method name="copyLineFrom"></Method>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"></Bug>
+    </Match>
+    <Match>
+        <Class name="com.ybl.genie.consumer.service.StoredProcedureService"/>
+        <Method name="initializeMockStoredProcedure"></Method>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION"></Bug>
+    </Match>
+</FindBugsFilter>

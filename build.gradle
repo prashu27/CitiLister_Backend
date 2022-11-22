@@ -1,0 +1,104 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.4'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	id 'java'
+	id 'jacoco'
+	id 'checkstyle'
+
+}
+group = 'com.assignment'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.7.3'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'com.opencsv:opencsv:5.7.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+	implementation 'com.jayway.jsonpath:json-path:2.7.0'
+	implementation 'org.mockito:mockito-inline:4.8.0'
+	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+}
+sourceSets{
+	test{
+		java.srcDirs =["src/test/java/unit","src/test/java/intg"]
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+test {
+	ignoreFailures = true
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpDir = file("$buildDir/jacoco/classpathdumps")
+	}
+}
+
+jacocoTestReport {
+	group = "Reporting"
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.destination file("${buildDir}/jacocoHtml")
+	}
+	executionData(test)
+}
+
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.6
+			}
+		}
+	}
+}
+def configDir = "${project.rootDir}/config/checkstyle"
+checkstyle {
+	ignoreFailures = false
+	configFile file("$configDir/checkstyle.xml")
+	sourceSets = [sourceSets.main]
+}
+/*
+spotbugs {
+	excludeFilter = rootProject.file('classpath:static/findbugs-exclude.xml')
+	ignoreFailures = false
+	sourceSets = [sourceSets.main]
+}
+
+pmd {
+	ignoreFailures = true
+	pmdTest.enabled = false
+	pmdItest.enabled = false
+	ruleSetFiles = getRootProject().files('codequality/pmd-ruleset.xml')
+
+}*/
+
+tasks.withType(Pmd) {
+	reports {
+		xml.enabled(true)
+		html.enabled(true)
+	}
+}
+// to run coverage verification during the build
+check.dependsOn jacocoTestCoverageVerification
